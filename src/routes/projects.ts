@@ -6,16 +6,47 @@ const prisma = new PrismaClient();
 
 router.get("/", async (req, res) => {
   try {
+    const { tech, year, search } = req.query;
+
+    const where: any = {};
+
+    if (tech) {
+      const techNames = String(tech).split(",").map(t => t.trim());
+
+      where.technologies = {
+        some: {
+          technology: {
+            name: { in: techNames, mode: "insensitive" },
+          },
+        },
+      };
+    }
+
+    if (year) {
+      const startDate = new Date(`${year}-01-01`);
+      const endDate = new Date(`${Number(year) + 1}-01-01`);
+      where.projectDate = { gte: startDate, lt: endDate };
+    }
+
+    if (search) {
+      where.OR = [
+        { title: { contains: String(search), mode: "insensitive" } },
+        { description: { contains: String(search), mode: "insensitive" } },
+      ];
+    }
+
     const projects = await prisma.project.findMany({
+      where,
       include: {
         technologies: { include: { technology: true } },
         images: true,
       },
       orderBy: { createdAt: "desc" },
     });
+
     res.json(projects);
   } catch (err) {
-    console.error(err);
+    console.error("Erro ao buscar projetos:", err);
     res.status(500).json({ error: "Erro ao buscar projetos" });
   }
 });
