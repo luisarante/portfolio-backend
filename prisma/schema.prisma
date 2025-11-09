@@ -8,6 +8,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ProjectStatus {
+  EM_DESENVOLVIMENTO
+  CONCLUIDO
+  ARQUIVADO
+}
+
 model Project {
   id           Int                      @id @default(autoincrement())
   title        String
@@ -16,6 +22,10 @@ model Project {
   linkDemo     String
   projectDate  DateTime
   createdAt    DateTime                 @default(now())
+  proposito    String?
+  aprendizados String[]
+  media_principal_url String?
+  status       ProjectStatus @default(EM_DESENVOLVIMENTO)
   images       Image[]
   technologies TechnologiesOnProjects[]
 }
