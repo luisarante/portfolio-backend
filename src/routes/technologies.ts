@@ -1,8 +1,49 @@
-import express from 'express';
-import { PrismaClient } from "../generated/prisma/client.js";
+import { Router, Request, Response } from "express";
+import prisma from "../prisma.js";
+import { authenticateToken } from '../middlewares/auth.js'; 
+import { requireAdmin } from '../middlewares/authorization.js'; 
 
-const router = express.Router();
-const prisma = new PrismaClient();
+const router = Router();
+
+router.post("/", 
+    authenticateToken, 
+    requireAdmin,
+    async (req: Request, res: Response) => {
+        
+        const { name, category, icon, color } = req.body;
+
+        if (!name || !category) {
+            return res.status(400).json({ error: "O nome e a categoria são obrigatórios." });
+        }
+
+        try {
+            const existingTechnology = await prisma.technology.findUnique({
+                where: { name: name },
+            });
+
+            if (existingTechnology) {
+                return res.status(409).json({ error: `A tecnologia '${name}' já existe.` });
+            }
+
+            const newTechnology = await prisma.technology.create({
+                data: {
+                    name,
+                    category,
+                    icon: icon || null,
+                    color: color || null,
+                    showInPortfolio: true, 
+                },
+            });
+
+            res.status(201).json(newTechnology);
+
+        } catch (err) {
+            console.error("Erro ao cadastrar tecnologia:", err);
+            res.status(500).json({ error: "Erro interno ao cadastrar a tecnologia." });
+        }
+    }
+);
+
 
 router.get("/", async (req, res) => {
     try {
@@ -10,9 +51,8 @@ router.get("/", async (req, res) => {
             where: {
                 showInPortfolio: true
             },
-            
             orderBy: {
-                id: 'asc' 
+                id: 'asc'
             }
         });
         res.json(myTechnologies);
