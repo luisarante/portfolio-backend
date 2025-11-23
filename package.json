@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "npx prisma generate && tsc",
-    "start": "node dist/server.js",
+    "build": "npx prisma generate",
+  "start": "tsx src/server.ts",
     "migrate": "dotenv -e .env -- prisma migrate dev",
     "generate": "dotenv -e .env -- prisma generate",
     "studio": "dotenv -e .env -- prisma studio",
@@ -23,7 +23,8 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "tsx": "^4.20.6"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
@@ -33,7 +34,6 @@
     "dotenv-cli": "^11.0.0",
     "prisma": "^5.22.0",
     "ts-node-dev": "^2.0.0",
-    "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   }
 }
