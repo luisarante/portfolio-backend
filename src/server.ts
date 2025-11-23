@@ -17,6 +17,10 @@ app.use("/api/skills", skillsRouter);
 app.use("/api/my-skills", technologiesRouter);
 app.use("/api/contact", contactRouter);
 
+app.get('/ping', (req, res) => {
+    return res.send('rodando');
+});
+
 const PORT = Number(process.env.PORT) || 3000;
 
 app.listen(PORT, '0.0.0.0', () => {
