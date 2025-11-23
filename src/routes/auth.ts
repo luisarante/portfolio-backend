@@ -6,7 +6,6 @@ import { UserPayload } from "../middlewares/auth.js";
 
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'sua_chave_secreta_segura';
-console.log("LOGIN SECRET:", JWT_SECRET);
 
 router.post("/login", async (req: Request, res: Response) => {
     const { email, password } = req.body;
